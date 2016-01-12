@@ -23,5 +23,3 @@ RUN apt-get install -y nodejs && npm install -g npm
 
 # clean all
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-CMD ["/sbin/my_init"]

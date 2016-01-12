@@ -8,36 +8,133 @@ We just add necessary software for our projects building (java, gradle, git, etc
 Detailed description of official docker container installation is here: +
 https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/blob/master/docs/install/docker.md
 
-== Create docker containers
+== Installation
 
-We will create two containers (config and runner):
+[[build_docker_image]]
+=== Build docker image
 
 [source,bash]
+----
+$ sudo ./build_image.sh
+Successfully built 2a2677eb307d
+----
+
+Result: image with name `startext/gitlab-runner-gradle` registered in local repository:
+
+[source,bash]
+----
+$ docker images startext/gitlab-runner-gradle
+REPOSITORY                      TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+startext/gitlab-runner-gradle   latest              2a2677eb307d        44 seconds ago      1.117 GB
+----
+
+[[create_docker_container]]
+=== Docker container creation
+
+Create two containers (config and runner):
+
+[source,bash]
+----
+$ docker run -d --name gitlab-runner-config \
+    -v /etc/gitlab-runner \
+    busybox:latest \
+    /bin/true
+
+$ docker run -d --name gitlab-runner-gradle --restart always \
+    --volumes-from gitlab-runner-config \
+    startext/gitlab-runner-gradle:latest
+----
+
+=== Register the runner
+
+[source,bash]
+----
+$ docker exec -it gitlab-runner-gradle gitlab-runner register \
+  --non-interactive \
+  --url "https://startext.tomsk.ru:5000/ci" \
+  --registration-token "TOKEN_HERE" \
+  --name "runner-name" \
+  --executor "shell" \
+  --tag-list "java,gradle"
+INFO[0000] TN4Lx9Wp Registering runner... succeeded
+INFO[0000] Runner registered successfully. Feel free to start it, but if it's running already the config should be automatically reloaded!
+----
+
+== Update
+
+* Stop and remove the existing container:
+[source,bash]
+----
+$ docker stop gitlab-runner-gradle && docker rm gitlab-runner-gradle
+----
+* Rebuild docker image. See <<build_docker_image>> section.
+* Create docker container with runner as it's described in section <<create_docker_container>>.
+
+== Build from gitlab original image
+
+=== Create docker containers
+
+[source, bash]
 ----
 docker run -d --name gitlab-runner-config \
     -v /etc/gitlab-runner \
     busybox:latest \
     /bin/true
 
-docker run -d --name gitlab-runner-gradle --restart always \
+docker run -d --name gitlab-runner --restart always \
     --volumes-from gitlab-runner-config \
-    startext/gitlab-runner-gradle:latest
+    startext/gitlab-runner:latest
 ----
 
-== Register the runner
+=== Register the runner
 
-[source,bash]
+[source, bash]
 ----
-docker exec -it gitlab-runner-gradle gitlab-runner register \
+docker exec -it gitlab-runner gitlab-runner register \
   --non-interactive \
   --url "https://startext.tomsk.ru:5000/ci" \
   --registration-token "REGISTRATION_TOKEN" \
   --description "gitlab-runner-name" \
   --executor "shell" \
-  --tag-list "java,gradle,maven"
+  --tag-list "java,gradle"
 ----
 
-== Update
+=== Software installation
+
+==== System packages installation
+
+[source,bash]
+----
+sudo apt-get install -y software-properties-common git libfontconfig1
+----
+
+==== Oracle JDK installation
+
+[source,bash]
+----
+sudo add-apt-repository -yu ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+----
+
+==== Gradle installation
+[source,bash]
+----
+sudo add-apt-repository -yu ppa:cwchien/gradle
+sudo apt-get update
+sudo apt-get install -y gradle-ppa
+----
+
+==== NodeJS installation
+
+[source,bash]
+----
+sudo curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo npm install -g npm
+----
+
+=== Update
 
 Pull the latest version:
 [source,bash]
@@ -49,39 +146,4 @@ Stop and remove the existing container:
 [source,bash]
 ----
 docker stop gitlab-runner && docker rm gitlab-runner
-----
-
-== Manual installation of packages
-
-=== System packages installation
-
-[source,bash]
-----
-sudo apt-get install -y software-properties-common git libfontconfig1
-----
-
-=== Oracle JDK installation
-
-[source,bash]
-----
-sudo add-apt-repository -yu ppa:webupd8team/java
-sudo apt-get update
-sudo apt-get install oracle-java8-installer
-----
-
-=== Gradle installation
-[source,bash]
-----
-sudo add-apt-repository -yu ppa:cwchien/gradle
-sudo apt-get update
-sudo apt-get install -y gradle-ppa
-----
-
-=== NodeJS installation
-
-[source,bash]
-----
-sudo curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
-sudo apt-get install -y nodejs
-sudo npm install -g npm
 ----
