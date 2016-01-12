@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build $@ -t startext/gradle-gitlab-runner .
+docker build $@ -t startext/gitlab-runner-gradle .

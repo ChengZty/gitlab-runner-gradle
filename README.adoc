@@ -19,16 +19,16 @@ docker run -d --name gitlab-runner-config \
     busybox:latest \
     /bin/true
 
-docker run -d --name gitlab-runner --restart always \
+docker run -d --name gitlab-runner-gradle --restart always \
     --volumes-from gitlab-runner-config \
-    gitlab/gitlab-runner:latest
+    startext/gitlab-runner-gradle:latest
 ----
 
 == Register the runner
 
 [source,bash]
 ----
-docker exec -it gitlab-runner gitlab-runner register \
+docker exec -it gitlab-runner-gradle gitlab-runner register \
   --non-interactive \
   --url "https://startext.tomsk.ru:5000/ci" \
   --registration-token "REGISTRATION_TOKEN" \
@@ -64,7 +64,7 @@ sudo apt-get install -y software-properties-common git libfontconfig1
 
 [source,bash]
 ----
-sudo add-apt-repository ppa:webupd8team/java
+sudo add-apt-repository -yu ppa:webupd8team/java
 sudo apt-get update
 sudo apt-get install oracle-java8-installer
 ----
@@ -72,7 +72,7 @@ sudo apt-get install oracle-java8-installer
 === Gradle installation
 [source,bash]
 ----
-sudo add-apt-repository ppa:cwchien/gradle
+sudo add-apt-repository -yu ppa:cwchien/gradle
 sudo apt-get update
 sudo apt-get install -y gradle-ppa
 ----
