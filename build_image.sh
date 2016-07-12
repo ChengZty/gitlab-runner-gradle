@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build $@ -t startext/gitlab-runner-gradle .
+docker build --no-cache $@ -t startext/gitlab-runner-gradle .

@@ -21,5 +21,8 @@ RUN sudo add-apt-repository ppa:cwchien/gradle -y && apt-get update && apt-get i
 RUN curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 RUN apt-get install -y nodejs && npm install -g npm
 
+# Fix error with permissions
+RUN chmod a+r /etc/gitlab-runner/config.toml
+
 # clean all
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
