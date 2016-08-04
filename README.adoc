@@ -1,4 +1,14 @@
 = Docker container for gitlab-runner-gradle
+v0.1, {localdate}
+:author: Alexey Ukhov, startext GmbH
+:email: <mail@startext.de>
+:icons: font
+:numbered:
+:toc:
+:toclevels: 3
+:encoding: utf-8
+:source-highlighter: coderay
+
 
 == Introduction
 
@@ -82,7 +92,7 @@ $ docker run -d --name gitlab-runner-gradle --restart always \
     startext/gitlab-runner-gradle:latest
 ----
 
-== Manual build from gitlab original image
+== Manual build from gitlab-runner original image
 
 === Create docker containers
 
