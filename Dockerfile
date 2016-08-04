@@ -4,9 +4,10 @@ MAINTAINER Alexey Ukhov <auk@startext.tomsk.ru>
 
 ENV HOME /root
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+ENV TERM rxvt
 
 RUN locale-gen en_US.UTF-8
-RUN apt-get update && apt-get install -yq --no-install-recommends software-properties-common git curl libfontconfig1
+RUN apt-get update && apt-get install -yq --no-install-recommends software-properties-common git curl libfontconfig1 libc6-dev
 
 # Oracle JDK 8 installation
 RUN sudo add-apt-repository ppa:webupd8team/java -y && apt-get update

@@ -1,4 +1,4 @@
-= Docker container for gitlab-runner
+= Docker container for gitlab-runner-gradle
 
 == Introduction
 
@@ -55,22 +55,34 @@ $ docker exec -it gitlab-runner-gradle gitlab-runner register \
   --registration-token "TOKEN_HERE" \
   --name "runner-name" \
   --executor "shell" \
-  --tag-list "java,gradle"
+  --tag-list "java,gradle,nodejs"
 INFO[0000] TN4Lx9Wp Registering runner... succeeded
 INFO[0000] Runner registered successfully. Feel free to start it, but if it's running already the config should be automatically reloaded!
 ----
 
 == Update
 
+* Pull the latest version:
+[source,bash]
+----
+docker pull gitlab/gitlab-runner:latest
+----
+or rebuild docker image. See <<build_docker_image>> section.
+
 * Stop and remove the existing container:
 [source,bash]
 ----
 $ docker stop gitlab-runner-gradle && docker rm gitlab-runner-gradle
 ----
-* Rebuild docker image. See <<build_docker_image>> section.
 * Create docker container with runner as it's described in section <<create_docker_container>>.
+[source,bash]
+----
+$ docker run -d --name gitlab-runner-gradle --restart always \
+    --volumes-from gitlab-runner-config \
+    startext/gitlab-runner-gradle:latest
+----
 
-== Build from gitlab original image
+== Manual build from gitlab original image
 
 === Create docker containers
 
@@ -96,7 +108,7 @@ docker exec -it gitlab-runner gitlab-runner register \
   --registration-token "REGISTRATION_TOKEN" \
   --description "gitlab-runner-name" \
   --executor "shell" \
-  --tag-list "java,gradle"
+  --tag-list "java,gradle,nodejs"
 ----
 
 === Software installation
@@ -105,7 +117,8 @@ docker exec -it gitlab-runner gitlab-runner register \
 
 [source,bash]
 ----
-sudo apt-get install -y software-properties-common git libfontconfig1
+sudo apt-get update
+sudo apt-get install -y software-properties-common git libfontconfig1 libc6-dev
 ----
 
 ==== Oracle JDK installation
@@ -132,18 +145,4 @@ sudo apt-get install -y gradle-ppa
 sudo curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install -g npm
-----
-
-=== Update
-
-Pull the latest version:
-[source,bash]
-----
-docker pull gitlab/gitlab-runner:latest
-----
-
-Stop and remove the existing container:
-[source,bash]
-----
-docker stop gitlab-runner && docker rm gitlab-runner
 ----
