@@ -1,2 +1,3 @@
 #!/bin/sh
-docker build --no-cache $@ -t startext/gitlab-runner-gradle .
+docker pull gitlab/gitlab-runner:latest
+docker build --no-cache --force-rm $@ -t startext/gitlab-runner-gradle:latest .
