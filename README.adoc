@@ -75,7 +75,7 @@ INFO[0000] Runner registered successfully. Feel free to start it, but if it's ru
 * Pull the latest version:
 [source,bash]
 ----
-docker pull gitlab/gitlab-runner:latest
+docker pull startext/gitlab-runner-gradle:latest
 ----
 or rebuild docker image. See <<build_docker_image>> section.
 
