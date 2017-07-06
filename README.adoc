@@ -1,7 +1,7 @@
 = Docker container for gitlab-runner-gradle
 v0.1, {localdate}
 :author: Alexey Ukhov, startext GmbH
-:email: <mail@startext.de>
+:email: <auk@startext.ru>
 :icons: font
 :numbered:
 :toc:
@@ -45,13 +45,10 @@ Create two containers (config and runner):
 
 [source,bash]
 ----
-$ docker run -d --name gitlab-runner-config \
-    -v /etc/gitlab-runner \
-    busybox:latest \
-    /bin/true
+$ docker volume create --name gitlab-runner-config
 
 $ docker run -d --name gitlab-runner-gradle --restart always \
-    --volumes-from gitlab-runner-config \
+    -v gitlab-runner-config:/etc/gitlab-runner \
     startext/gitlab-runner-gradle:latest
 ----
 
@@ -61,7 +58,7 @@ $ docker run -d --name gitlab-runner-gradle --restart always \
 ----
 $ docker exec -it gitlab-runner-gradle gitlab-runner register \
   --non-interactive \
-  --url "https://startext.tomsk.ru:5000/ci" \
+  --url "https://git.startext.ru:5000/ci" \
   --registration-token "TOKEN_HERE" \
   --name "runner-name" \
   --executor "shell" \
@@ -88,7 +85,7 @@ $ docker stop gitlab-runner-gradle && docker rm gitlab-runner-gradle
 [source,bash]
 ----
 $ docker run -d --name gitlab-runner-gradle --restart always \
-    --volumes-from gitlab-runner-config \
+    -v gitlab-runner-config:/etc/gitlab-runner \
     startext/gitlab-runner-gradle:latest
 ----
 
@@ -98,14 +95,11 @@ $ docker run -d --name gitlab-runner-gradle --restart always \
 
 [source, bash]
 ----
-docker run -d --name gitlab-runner-config \
-    -v /etc/gitlab-runner \
-    busybox:latest \
-    /bin/true
+$ docker volume create --name gitlab-runner-config
 
 docker run -d --name gitlab-runner --restart always \
-    --volumes-from gitlab-runner-config \
-    startext/gitlab-runner:latest
+  -v gitlab-runner-config:/etc/gitlab-runner \
+   gitlab/gitlab-runner:latest
 ----
 
 === Register the runner
@@ -114,7 +108,7 @@ docker run -d --name gitlab-runner --restart always \
 ----
 docker exec -it gitlab-runner gitlab-runner register \
   --non-interactive \
-  --url "https://startext.tomsk.ru:5000/ci" \
+  --url "https://git.startext.ru:5000/ci" \
   --registration-token "REGISTRATION_TOKEN" \
   --description "gitlab-runner-name" \
   --executor "shell" \
@@ -137,7 +131,7 @@ sudo apt-get install -y software-properties-common git libfontconfig1 libc6-dev
 ----
 sudo add-apt-repository ppa:webupd8team/java -y
 sudo apt-get update
-sudo apt-get install oracle-java8-installer
+sudo apt-get install oracle-java8-installer oracle-java8-set-default
 ----
 
 ==== Gradle installation
@@ -152,7 +146,7 @@ sudo apt-get install -y gradle-ppa
 
 [source,bash]
 ----
-sudo curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install -g npm
 ----
