@@ -1,0 +1,60 @@
+== Manual build from gitlab-runner original image
+
+=== Create docker containers
+
+[source, bash]
+----
+$ docker volume create --name gitlab-runner-config
+
+docker run -d --name gitlab-runner --restart always \
+  -v gitlab-runner-config:/etc/gitlab-runner \
+   gitlab/gitlab-runner
+----
+
+=== Software installation
+
+Install necessary packages:
+[source,bash]
+----
+sudo apt-get update
+sudo apt-get install -y software-properties-common git libfontconfig1 libc6-dev
+----
+
+==== Oracle JDK installation
+
+[source,bash]
+----
+sudo add-apt-repository ppa:webupd8team/java -y
+sudo apt-get update
+sudo apt-get install oracle-java8-installer oracle-java8-set-default
+----
+
+==== Gradle installation
+[source,bash]
+----
+sudo add-apt-repository ppa:cwchien/gradle -y
+sudo apt-get update
+sudo apt-get install -y gradle-ppa
+----
+
+==== NodeJS installation
+
+[source,bash]
+----
+sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo npm install -g npm
+----
+
+=== Register the runner
+
+[source, bash]
+----
+docker exec -it gitlab-runner gitlab-runner register \
+  --non-interactive \
+  --url "https://git.startext.ru:5000/ci" \
+  --registration-token "REGISTRATION_TOKEN" \
+  --description "gitlab-runner-name" \
+  --executor "shell" \
+  --tag-list "java,gradle,nodejs"
+----

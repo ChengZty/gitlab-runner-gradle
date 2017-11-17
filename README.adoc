@@ -9,10 +9,9 @@ v0.1, {localdate}
 :encoding: utf-8
 :source-highlighter: coderay
 
-
 == Introduction
 
-This container is based on official docker container from gitlab.
+This container is based on official docker container from gitlab. +
 We just add necessary software for our projects building (java, gradle, git, etc).
 
 Detailed description of official docker container installation is here: +
@@ -20,36 +19,25 @@ https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/blob/master/docs/install/do
 
 == Installation
 
-[[build_docker_image]]
-=== Build docker image
-
-[source,bash]
-----
-$ sudo ./build_image.sh
-Successfully built 2a2677eb307d
-----
-
-Result: image with name `startext/gitlab-runner-gradle` registered in local repository:
-
-[source,bash]
-----
-$ docker images startext/gitlab-runner-gradle
-REPOSITORY                      TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
-startext/gitlab-runner-gradle   latest              2a2677eb307d        44 seconds ago      1.117 GB
-----
-
 [[create_docker_container]]
-=== Docker container creation
+=== Docker containers creation
 
-Create two containers (config and runner):
+Create two containers.
+
+For configuration:
 
 [source,bash]
 ----
-$ docker volume create --name gitlab-runner-config
+docker volume create --name gitlab-runner-config
+----
 
-$ docker run -d --name gitlab-runner-gradle --restart always \
+and for runner:
+[source,bash]
+----
+docker run -d --name gitlab-runner-gradle --restart always \
     -v gitlab-runner-config:/etc/gitlab-runner \
-    startext/gitlab-runner-gradle:latest
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    registry.stx-tomsk:5000/startext/gitlab-runner-gradle
 ----
 
 === Register the runner
@@ -69,84 +57,28 @@ INFO[0000] Runner registered successfully. Feel free to start it, but if it's ru
 
 == Update
 
-* Pull the latest version:
+Pull the latest version from registry:
 [source,bash]
 ----
-docker pull startext/gitlab-runner-gradle:latest
+docker pull registry.stx-tomsk:5000/gitlab-runner-gradle:latest
 ----
 or rebuild docker image. See <<build_docker_image>> section.
 
-* Stop and remove the existing container:
+Stop and remove the existing container:
 [source,bash]
 ----
 $ docker stop gitlab-runner-gradle && docker rm gitlab-runner-gradle
 ----
-* Create docker container with runner as it's described in section <<create_docker_container>>.
+
+Create docker container with runner as it's described in section <<create_docker_container>>.
 [source,bash]
 ----
-$ docker run -d --name gitlab-runner-gradle --restart always \
+docker run -d --name gitlab-runner-gradle --restart always \
     -v gitlab-runner-config:/etc/gitlab-runner \
-    startext/gitlab-runner-gradle:latest
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    registry.stx-tomsk:5000/startext/gitlab-runner-gradle
 ----
 
-== Manual build from gitlab-runner original image
+include::docs/create_image.adoc[]
 
-=== Create docker containers
-
-[source, bash]
-----
-$ docker volume create --name gitlab-runner-config
-
-docker run -d --name gitlab-runner --restart always \
-  -v gitlab-runner-config:/etc/gitlab-runner \
-   gitlab/gitlab-runner:latest
-----
-
-=== Register the runner
-
-[source, bash]
-----
-docker exec -it gitlab-runner gitlab-runner register \
-  --non-interactive \
-  --url "https://git.startext.ru:5000/ci" \
-  --registration-token "REGISTRATION_TOKEN" \
-  --description "gitlab-runner-name" \
-  --executor "shell" \
-  --tag-list "java,gradle,nodejs"
-----
-
-=== Software installation
-
-==== System packages installation
-
-[source,bash]
-----
-sudo apt-get update
-sudo apt-get install -y software-properties-common git libfontconfig1 libc6-dev
-----
-
-==== Oracle JDK installation
-
-[source,bash]
-----
-sudo add-apt-repository ppa:webupd8team/java -y
-sudo apt-get update
-sudo apt-get install oracle-java8-installer oracle-java8-set-default
-----
-
-==== Gradle installation
-[source,bash]
-----
-sudo add-apt-repository ppa:cwchien/gradle -y
-sudo apt-get update
-sudo apt-get install -y gradle-ppa
-----
-
-==== NodeJS installation
-
-[source,bash]
-----
-sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-sudo apt-get install -y nodejs
-sudo npm install -g npm
-----
+include::docs/manual_build.adoc[]

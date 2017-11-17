@@ -1,0 +1,40 @@
+== Create docker image
+
+[[build_docker_image]]
+=== Build docker image
+
+[source,bash]
+----
+$ sudo ./build_image.sh
+Successfully built 2a2677eb307d
+----
+
+Result: image with name `startext/gitlab-runner-gradle` registered in local repository:
+
+[source,bash]
+----
+$ docker images startext/gitlab-runner-gradle
+REPOSITORY                      TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+startext/gitlab-runner-gradle   latest              2a2677eb307d        44 seconds ago      1.117 GB
+----
+
+=== Deploy to docker hub
+
+[source,bash]
+----
+docker push startext/gitlab-runner-gradle
+----
+
+=== Deploy image to local registry
+
+Create tag:
+[source,bash]
+----
+docker tag startext/gitlab-runner-gradle registry.stx-tomsk:5000/startext/gitlab-runner-gradle:latest
+----
+
+Deploy to registry server:
+[source,bash]
+----
+docker push registry.stx-tomsk:5000/startext/gitlab-runner-gradle:latest
+----
