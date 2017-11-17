@@ -52,7 +52,26 @@ $ docker exec -it gitlab-runner-gradle gitlab-runner register \
   --executor "shell" \
   --tag-list "java,gradle,nodejs"
 INFO[0000] TN4Lx9Wp Registering runner... succeeded
-INFO[0000] Runner registered successfully. Feel free to start it, but if it's running already the config should be automatically reloaded!
+----
+
+=== Validate installation
+
+[source,bash]
+----
+$ docker exec -it gitlab-runner-gradle gitlab-runner -v
+Version:      10.1.0
+Git revision: c1ecf97f
+Git branch:   10-1-stable
+GO version:   go1.8.3
+Built:        Sat, 21 Oct 2017 21:33:24 +0000
+OS/Arch:      linux/amd64
+----
+
+[source,bash]
+----
+$ docker exec -it gitlab-runner-gradle gitlab-runner list
+Listing configured runners    ConfigFile=/etc/gitlab-runner/config.toml
+pablo                         Executor=shell Token=XXXYYYZZZ URL=https://git.startext.ru:5000/ci
 ----
 
 == Update
