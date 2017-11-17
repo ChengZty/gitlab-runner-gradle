@@ -47,8 +47,8 @@ docker run -d --name gitlab-runner-gradle --restart always \
 $ docker exec -it gitlab-runner-gradle gitlab-runner register \
   --non-interactive \
   --url "https://git.startext.ru:5000/ci" \
-  --registration-token "TOKEN_HERE" \
-  --name "runner-name" \
+  --registration-token "<<TOKEN_HERE>>" \
+  --name "<<CHANGE_RUNNER_NAME>>" \
   --executor "shell" \
   --tag-list "java,gradle,nodejs"
 INFO[0000] TN4Lx9Wp Registering runner... succeeded
